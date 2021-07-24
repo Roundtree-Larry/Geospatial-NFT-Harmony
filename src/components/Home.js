@@ -80,11 +80,12 @@ class Home extends Component {
 			this.setState({
 				contract: contract,
 			});
+			console.log(contract)
 			for (var i = 1; i <= totalSupply; i++) {
 				const URL = await contract.methods.tokenURI(i).call();
 				const nftjson = await this.loadingMetadata(URL);
-
-
+				const Price = await contract.methods.getPrice(i).call();
+				console.log("price", Price)
 				if (nftjson === undefined) {
 					console.log(i + "nftjson is undefined");
 				} else {
@@ -92,6 +93,7 @@ class Home extends Component {
 					this.setState({
 						tokenURL: [...this.state.tokenURL, imgURL],
 						nftjson: [...this.state.nftjson, nftjson],
+						Price: [...this.state.Price, Price],
 
 					});
 				}
@@ -107,7 +109,7 @@ class Home extends Component {
 			} else {
 				if (this.state.account) {
 					balance = await this.state.web3.eth.getBalance(this.state.account);
-					totalSupply = await this.state.contract2.methods.totalSupply().call();
+					totalSupply = await this.state.contract.methods.totalSupply().call();
 					this.setState({ balance: balance, totalSupply: totalSupply });
 				}
 				this.setState({
@@ -120,21 +122,6 @@ class Home extends Component {
 		});
 	}
 
-
-	Myposistion() {
-		navigator.geolocation.getCurrentPosition((position) => {
-			const imagePosition = position.coords;
-			const latitude = imagePosition.latitude;
-			const longitude = imagePosition.longitude;
-
-			this.setState({
-				latitude: latitude,
-				longitude: longitude,
-			});
-
-		});
-		console.log(this.state.latitude, this.state.longitude)
-	}
 	constructor(state) {
 		super(state);
 		this.state = {
@@ -142,7 +129,8 @@ class Home extends Component {
 			longitude: null,
 			account: null,
 			limit: "0",
-			price: "0",
+			Price: [],
+			Price0: "0",
 			balance: null,
 			contract: null,
 			event: null,
@@ -163,7 +151,7 @@ class Home extends Component {
 		this.handleChange = this.handleChange.bind(this);
 		this.handleupload = this.handleupload.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handledata = this.handledata.bind(this);
+		this.handleIpfsData = this.handleIpfsData.bind(this);
 	}
 	handleChange(event) {
 		this.setState({
@@ -191,7 +179,7 @@ class Home extends Component {
 		});
 	};
 
-	handledata = async (event) => {
+	handleIpfsData = async (event) => {
 		event.preventDefault();
 		const jsondata = {
 			ipfsHash: this.state.ipfsHash,
@@ -226,11 +214,119 @@ class Home extends Component {
 		this.setState({ addressinfo: addressinfo })
 		console.log(addressinfo)
 	}
+	buyNft = async (itemId) => {
+		const gasPrice = new BN(await this.state.web3.eth.getGasPrice()).mul(
+			new BN(1)
+		);
+		console.log(itemId)
+		const gasLimit = 6721900;
+		this.state.contract.methods
+			.buyNft(itemId)
+			.send({ from: this.state.account, gasPrice, gasLimit })
+			.once("receipt", (receipt) => {
+				console.log(receipt);
+				window.alert('Done!')
+			});
+	};
+	setPrice = async (itemId, Price) => {
+		const Price0 = window.web3.utils.toWei(Price, 'Ether')
+		const gasPrice = new BN(await this.state.web3.eth.getGasPrice()).mul(
+			new BN(1)
+		);
+
+		const gasLimit = 6721900;
+		this.state.contract.methods
+			.setPrice(itemId, Price0)
+			.send({ from: this.state.account, gasPrice, gasLimit })
+			.once("receipt", (receipt) => {
+				console.log(receipt);
+				window.alert('Done!')
+			});
+	};
+	buyNft =(ID) => {
+		const Price = this.state.Price[ID]
+		const gasLimit = 6721900;
+		  this.state.contract.methods
+		  .buyNft(ID)
+		  .send({value: Price, from: this.state.account, gasLimit })
+		  .once("receipt", (receipt) => {
+			console.log(receipt);
+			window.alert('Done!')
+		  });
+	  }
 	render() {
 		return (
 			<div>
 				<Navbar balance={this.state.balance} account={this.state.account} />
 
+
+				<div style={{ margin: '0px 100px -80px' }}>
+					<Map
+						google={this.state.google}
+						center={{ lat: 51.5134927, lng: -0.2203475 }}
+						height='500px'
+						zoom={15}
+						localisationdata={this.localisationdata}
+					/>
+
+				</div>
+				<div >
+					<form onSubmit={this.handleSubmit}>
+						<div className="text-center" style={{ margin: '90px' }}>
+							<div className="form-group row">
+								<label className="col-form-label"><b>Your Account :</b> </label>
+								<div className=" form-control" readOnly="readOnly">
+									{this.state.account}
+								</div>
+							</div>
+							<div className=" ">
+								<label htmlFor="file-upload" className="btn custom-file-upload " style={{ width: "160px" }}>
+									<i className="fa fa-cloud-upload"></i>  Import Your Image
+								</label>
+								<input
+									name="file"
+									type="file"
+									id="file-upload"
+									aria-describedby="inputGroupFileAddon04"
+									aria-label="Upload"
+									onChange={this.handleupload}
+									className="btn"
+								/>
+							</div>
+
+							{!this.state.ipfsHash ? (
+							<p> Loading ...</p>
+							) : (
+								<div>
+									<img
+										src={"https://ipfs.io/ipfs/" + this.state.ipfsHash}
+										alt=""
+									/>
+								</div>
+							)}
+						</div>
+						<div className="text-center">
+							<button className="btn btn-outline-secondary " style={{ width: "160px" }}>
+								Upload to IPFS
+							</button>
+						</div>
+					</form>
+					<br></br>
+					<div className="text-center">
+						<button
+							className="btn btn-outline-secondary"
+							type="button"
+							id="inputGroupFileAddon04"
+							onClick={this.handleIpfsData}
+							style={{ width: "160px" }}
+						>Create the  NFT</button>
+					</div><br></br>
+					
+					
+				</div>
+
+
+				<hr></hr>
 				<div className="container-fluid mt-10 col-m-10">
 					<div className="col-sm">
 						<main
@@ -240,7 +336,7 @@ class Home extends Component {
 							<div
 								className="container-fluid "
 							>
-								<br></br><h5 className="card-title">list of all NFT minted:</h5>
+								<br></br><h5 className="card-title"  style={{ fontSize: "26px", textShadow: "0px 0px 18px cyan" }}>List of NFTs</h5>
 								<div className="container-fluid mt-10 col-m-10 ">
 
 									<div className="content mr-auto ml-auto cover-container">
@@ -251,11 +347,10 @@ class Home extends Component {
 														<div className="card-body card hm-gradient mb-3 cover-item container-fluid">
 															<img
 																src={tokenURL}
-																className="rounded img-fluid"
+																className="rounded card-img-top"
 																alt="NFT"
-																height="200px"
-																width="200px"
-																class="card-img-top"
+																height="270px"
+																width="120px"
 															></img>
 															<h5 className="card-title">{this.state.nftjson[key].Name}</h5>
 															<ul className="list-group list-group-flush list-group-mine my-text">
@@ -263,9 +358,57 @@ class Home extends Component {
 																<li className="list-group-item"><b>City :</b> {this.state.nftjson[key].city}</li>
 																<li className="list-group-item"><b>Area :</b>{this.state.nftjson[key].area} </li>
 																<li className="list-group-item"><b>State :</b>{this.state.nftjson[key].state} </li>
+																<li className="list-group-item"><b>Price :</b>{this.state.Price[key] / 10 ** 18} <b>ONE</b></li>
+																<li className="list-group-item"><b>Item ID :</b>{key + 1} </li>
 															</ul>
+															<div className="card container-fluid mt-10 col-m-10 background-color: $indigo-900;">
 
+																<form
+																	className="form-group row"
+																	onSubmit={(event) => {
+																		event.preventDefault();
+																		this.setPrice(key + 1, this.state.Price0);
+																	}}
+																>
+																	<div className="form-group row">
+																		<label htmlFor="name" className="col-sm-2 col-form-label">
+																			<h5>Price :</h5>
+																		</label>
+																		<div className="col-sm-10">
+																			<input
+																				name="Price0"
+																				placeholder="Name"
+																				className="form-control"
+																				value={this.state.Price0}
+																				onChange={this.handleChange}
+																			/>
+																		</div>
+																	</div>
 
+																	<button
+																		type="submit"
+																		className="btn2 btn-primary btn-block btn-lg"
+																	>
+																		Set Price
+																	</button>
+																</form>
+
+																<form
+																	className="form-group row"
+																	onSubmit={(event) => {
+																		event.preventDefault();
+																		this.buyNft(key);
+																	}}
+																>
+
+																	<button
+																		type="submit"
+																		className="btn btn-primary btn-block btn-lg"
+																	>
+																		Buy
+																	</button>
+																</form>
+															</div>
 														</div>
 													</div>
 												);
@@ -279,73 +422,7 @@ class Home extends Component {
 						</main>
 					</div>
 				</div>
-				<div style={{ margin: '100px' }}>
-					<Map
-						google={this.state.google}
-						center={{ lat: 32.299717699999995, lng: -9.245312799999999 }}
-						height='300px'
-						zoom={15}
-						localisationdata={this.localisationdata}
-					/>
-
-				</div>
-				<form onSubmit={this.handleSubmit}>
-					<div className="text-center" style={{ margin: '100px' }}>
-						<div className="form-group row">
-							<label className="col-form-label"><b>Your Account :</b> </label>
-							<div className=" form-control" readOnly="readOnly">
-								{this.state.account}
-							</div>
-						</div>
-						<div className=" ">
-							<label for="file-upload" className="btn custom-file-upload ">
-								<i className="fa fa-cloud-upload"></i>  Import Your Image
-							</label>
-							<input
-								name="file"
-								type="file"
-								id="file-upload"
-								aria-describedby="inputGroupFileAddon04"
-								aria-label="Upload"
-								onChange={this.handleupload}
-								className="btn"
-							/>
-						</div>
-
-						{!this.state.ipfsHash ? (
-							<div
-								id="loader"
-								className="spinner-grow text-light"
-								role="status"
-							></div>
-						) : (
-							<div>
-								<img
-									src={"https://ipfs.io/ipfs/" + this.state.ipfsHash}
-									height="200"
-									width="150"
-									alt=""
-								/>
-							</div>
-						)}
-					</div>
-					<div className="text-center">
-						<button className="btn btn-outline-secondary ">
-							Upload to IPFS
-						</button>
-					</div>
-				</form>
-				<br></br>
-				<div className="text-center">
-					<button
-						className="btn btn-outline-secondary"
-						type="button"
-						id="inputGroupFileAddon04"
-						onClick={this.handledata}
-					>Create the  NFT</button>
-				</div>
-
-				
+<br></br><br></br>
 			</div>
 
 		);

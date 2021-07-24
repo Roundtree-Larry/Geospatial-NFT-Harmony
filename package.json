@@ -1,6 +1,6 @@
 {
-  "name": "client",
-  "version": "0.1.0",
+  "name": "lahcenkh",
+  "version": "0.0.1",
   "private": true,
   "dependencies": {
     "@harmony-js/core": "^0.1.57",

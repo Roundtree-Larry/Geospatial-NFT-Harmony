@@ -61,6 +61,7 @@ input[type="file"] {
 
 :root {
   --gradient: linear-gradient(to left top, #2600ff 10%, #6146ff 90%) !important;
+  --gradient2: linear-gradient(to left top, #ff0000 10%, #ff4646 90%) !important;
 }
 
 
@@ -80,7 +81,24 @@ input[type="file"] {
   text-decoration: none;
   transition: all .4s ease;
 }
-
+.btn2 {
+  border: 5px solid;
+  border-image-slice: 1;
+  background: var(--gradient2) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  border-image-source:  var(--gradient2) !important; 
+  text-decoration: none;
+  transition: all .4s ease;
+}
+.btn2:hover, .btn2:focus {
+  background: var(--gradient2) !important;
+-webkit-background-clip: none !important;
+-webkit-text-fill-color: #fff !important;
+border: 5px solid #fff !important; 
+box-shadow: #222 1px 0 10px;
+text-decoration: underline;
+}
 .btn:hover, .btn:focus {
       background: var(--gradient) !important;
   -webkit-background-clip: none !important;
