@@ -10,11 +10,13 @@
 
 
 ## Mint NFT Demo:
-
-
+![](mintnft.gif)
 
 ## Set Price Demo:
+![](setprice.gif)
 
+## Buy NFT Demo:
+![](buynft.gif)
 
 ## Use :point_right:
 
