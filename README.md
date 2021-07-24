@@ -1,22 +1,16 @@
-# Geospatial NFT in React: Location Search | Mint NFT | Set Price & Buy
+# Geospatial NFT
+## Location Search | Mint NFT | Set Price & Buy
 
 
 ## Description :
-> This is a submission for Harmony Hackathon (Harmony-One-Love-2). ONE World: Geospatial NFT Marketplace.
->Demo App for Draggable marker to position, Upload (City, Area, State, real world image) to IPFS and Mint the NFT.
->the NFT appear in the buttom containe information, and let to Set the Price of the NFT for Owner, and let to Buy the NFT for other users.
+This is a submission for Harmony Hackathon (Harmony-One-Love-2). ONE World: Geospatial NFT Marketplace.
+Demo App for Draggable marker to position, Upload (City, Area, State, real world image) to IPFS and Mint the NFT.
+the NFT appear in the buttom containe information, and let to Set the Price of the NFT for Owner, and let to Buy the NFT for other users.
 
 ## Marketplace of NFTs
-![](marketplace.png)
-
-## Mint NFT Demo :
-![](mintnft.gif)
-
-## Set Price Demo :
-![](setprice.gif)
-
-## Buy NFT Demo :
-![](buynft.gif)
+<p align="center">
+  <img  width="250" height="250" src="https://github.com/L-KH/Geospatial-NFT-Harmony/blob/master/src/components/Geospatial-NFT0.png">
+</p>
 
 ## Use :
 
@@ -24,7 +18,7 @@
 2. Add your Google Maps Key in `./client/src/client-config.js`
 
 ``` ruby
-GoogleMapsAPI = 'xxxxx';
+GoogleMapsAPI = '';
 
 ```
 3. Add your TEST Private key and MNEMONIC in `.env` file
@@ -38,8 +32,18 @@ GoogleMapsAPI = 'xxxxx';
 4. `npm start`
 
 ## Compile and Migrate :
-`npm install -g truffle`
-`truffle compile`
-`truffle migrate --network testnet --reset`
+1. `npm install -g truffle`
+2. `truffle compile`
+3. `truffle migrate --network testnet --reset`
+
+## Mint NFT Demo :
+<kbd>![](mintnft.gif)</kbd>
+
+## Set Price Demo :
+<kbd>![](setprice.gif)</kbd>
+
+## Buy NFT Demo :
+<kbd>![](buynft.gif)</kbd>
+
 
 
