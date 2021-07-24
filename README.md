@@ -4,7 +4,9 @@
 
 ## Description :
 This is a submission for Harmony Hackathon (Harmony-One-Love-2). ONE World: Geospatial NFT Marketplace.
+
 Demo App for Draggable marker to position, Upload (City, Area, State, real world image) to IPFS and Mint the NFT.
+
 the NFT appear in the buttom containe information, and let to Set the Price of the NFT for Owner, and let to Buy the NFT for other users.
 
 ## Marketplace of NFTs
@@ -45,5 +47,10 @@ GoogleMapsAPI = '';
 ## Buy NFT Demo :
 <kbd>![](buynft.gif)</kbd>
 
+
+## Info:
+<b>Twitter :</b> https://twitter.com/lahcen_kha
+
+<b>Gitcoin :</b> https://gitcoin.co/l-kh
 
 
